@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import jenkins.model.Jenkins;
@@ -110,6 +111,14 @@ public final class ParallelsDesktopCloud extends Cloud
 		{
 			if (connectorSlave == null)
 			{
+                Label slaveLabel = Label.get(labelString);
+                Set<Node> executors = slaveLabel.getNodes();
+
+                if (!executors.isEmpty()) {
+                    Node executor = executors.iterator().next();
+                    return (ParallelsDesktopConnectorSlaveComputer)executor.toComputer();
+                }
+
 				String slaveName = name + " host slave";
 				connectorSlave = new ParallelsDesktopConnectorSlave(this, slaveName, labelString, remoteFS, pdLauncher, useConnectorAsBuilder);
 				Jenkins.getInstance().addNode(connectorSlave);
